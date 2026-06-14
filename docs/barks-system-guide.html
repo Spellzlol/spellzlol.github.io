@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Barks System · руководство для дизайнеров</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050810;
+    --bg-elev: #08101a;
+    --bg-card: #0a1422;
+    --bg-code: #04070d;
+    --bg-panel: #0f1a2a;
+    --bg-panel-row: #0b1422;
+    --text: #d4dde6;
+    --text-muted: #8a98a8;
+    --text-faint: #5e6b7a;
+    --border: #1a2638;
+    --border-soft: #131c2a;
+    --accent: #5fc3e8;
+    --accent-bright: #8fd9f0;
+    --good: #6dc99a;
+    --warn: #e8c447;
+    --danger: #e87045;
+    --mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+    --sans: 'Inter', -apple-system, system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.6; font-size: 16px; min-height: 100vh; }
+  body::before { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(143,217,240,0.015) 2px, rgba(143,217,240,0.015) 3px); pointer-events: none; z-index: 1000; }
+  .frame { max-width: 920px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 2; }
+  .topbar { border-bottom: 1px solid var(--border); padding: 12px 0; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); background: linear-gradient(180deg, var(--bg-elev) 0%, var(--bg) 100%); }
+  .topbar .row { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .topbar .dot { display: inline-block; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; margin-right: 8px; box-shadow: 0 0 8px var(--accent); }
+  .topbar .classification { color: var(--accent); font-weight: 600; }
+  main { padding: 64px 0 96px; }
+  header.dossier { margin-bottom: 72px; padding-left: 24px; position: relative; }
+  header.dossier::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--accent); }
+  header.dossier .stamp { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  header.dossier h1 { font-family: var(--mono); font-weight: 600; font-size: 42px; line-height: 1.15; margin: 0 0 20px; }
+  header.dossier h1 .accent { color: var(--accent); }
+  header.dossier .lede { font-size: 18px; color: var(--text-muted); max-width: 680px; margin: 0; }
+  section { margin-bottom: 80px; }
+  .section-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px; }
+  .section-head .num { font-family: var(--mono); font-size: 12px; color: var(--text-faint); letter-spacing: 0.12em; }
+  .section-head h2 { font-family: var(--mono); font-weight: 600; font-size: 24px; margin: 0; }
+  .section-head h2 .accent { color: var(--accent); }
+  h3 { font-size: 18px; margin: 32px 0 12px; font-weight: 600; }
+  p { margin: 0 0 14px; }
+  p.muted, .muted { color: var(--text-muted); }
+  p.big { font-size: 18px; line-height: 1.55; }
+  strong { color: var(--accent-bright); font-weight: 600; }
+  code { font-family: var(--mono); background: var(--bg-code); padding: 1px 7px; border-radius: 2px; font-size: 0.88em; color: var(--accent-bright); border: 1px solid var(--border-soft); }
+  ul, ol { color: var(--text-muted); padding-left: 22px; margin: 0 0 16px; }
+  ul li, ol li { margin: 6px 0; }
+  .callout { padding: 16px 22px; margin: 24px 0; background: var(--bg-card); border: 1px solid var(--border); border-left: 3px solid; font-size: 15px; }
+  .callout .label { font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.1em; font-size: 10px; font-weight: 700; margin-bottom: 8px; display: block; }
+  .callout.accent { border-left-color: var(--accent); } .callout.accent .label { color: var(--accent); }
+  .callout.good { border-left-color: var(--good); } .callout.good .label { color: var(--good); }
+  .callout.warn { border-left-color: var(--warn); } .callout.warn .label { color: var(--warn); }
+  .callout.danger { border-left-color: var(--danger); } .callout.danger .label { color: var(--danger); }
+  .callout p:last-child { margin-bottom: 0; }
+  .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 24px 0; }
+  .why-card { background: var(--bg-card); border: 1px solid var(--border); padding: 22px 24px; position: relative; }
+  .why-card::before { content: ''; position: absolute; top: -1px; left: -1px; width: 16px; height: 16px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+  .why-card .num { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.12em; margin-bottom: 8px; }
+  .why-card h4 { font-size: 16px; margin: 0 0 10px; color: var(--text); font-weight: 600; }
+  .why-card p { font-size: 14px; color: var(--text-muted); margin: 0; line-height: 1.55; }
+  .role-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 28px 0; }
+  @media (max-width: 760px) { .role-grid { grid-template-columns: 1fr; } }
+  .role { background: var(--bg-card); border: 1px solid var(--border); border-top: 3px solid var(--accent); padding: 22px; }
+  .role .role-tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .role h4 { font-family: var(--mono); font-size: 20px; margin: 0 0 12px; font-weight: 600; }
+  .role p { font-size: 14px; color: var(--text-muted); margin: 0; line-height: 1.55; }
+  .vocab { border-top: 1px solid var(--border); }
+  .vocab .term { display: grid; grid-template-columns: 200px 1fr; gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--border); }
+  @media (max-width: 680px) { .vocab .term { grid-template-columns: 1fr; gap: 6px; } }
+  .vocab .term .name { font-family: var(--mono); font-size: 14px; color: var(--accent); font-weight: 600; }
+  .vocab .term .name .alt { color: var(--text-faint); font-weight: 400; margin-left: 6px; font-size: 12px; }
+  .vocab .term .def { color: var(--text-muted); font-size: 15px; line-height: 1.6; }
+  .table { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin: 24px 0; }
+  .table .tr { display: grid; grid-template-columns: 1fr 1.2fr; border-bottom: 1px solid var(--border-soft); }
+  .table .tr:last-child { border-bottom: 0; }
+  .table .tr.header { background: var(--bg-panel); font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); }
+  .table .td { padding: 14px 18px; font-size: 14.5px; line-height: 1.55; color: var(--text-muted); }
+  .table .tr:not(.header) .td:first-child { color: var(--text); font-weight: 500; }
+  @media (max-width: 680px) { .table .tr { grid-template-columns: 1fr; } }
+  .api-block { background: var(--bg-card); border: 1px solid var(--border); margin: 16px 0; overflow: hidden; }
+  .api-block .api-head { padding: 14px 20px; border-bottom: 1px solid var(--border-soft); background: var(--bg-panel); display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .api-block .api-head .kind { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); }
+  .api-block .api-body { padding: 16px 20px; font-size: 14.5px; color: var(--text-muted); line-height: 1.6; }
+  .recipes { display: grid; gap: 18px; margin-top: 24px; }
+  .recipe { background: var(--bg-card); border: 1px solid var(--border); overflow: hidden; }
+  .recipe .recipe-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 22px; border-bottom: 1px solid var(--border-soft); background: var(--bg-panel); }
+  .recipe .recipe-head h4 { margin: 0; font-family: var(--mono); font-size: 17px; color: var(--text); font-weight: 600; }
+  .status { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; padding: 4px 10px; border: 1px solid; white-space: nowrap; }
+  .status.real { color: var(--good); border-color: rgba(109,201,154,0.4); background: rgba(109,201,154,0.06); }
+  .status.removed { color: var(--danger); border-color: rgba(232,112,69,0.4); background: rgba(232,112,69,0.06); }
+  .recipe-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  @media (max-width: 820px) { .recipe-body { grid-template-columns: 1fr; } }
+  .recipe-body .col { padding: 18px 22px; }
+  .recipe-body .col + .col { border-left: 1px solid var(--border-soft); background: var(--bg-panel-row); }
+  @media (max-width: 820px) { .recipe-body .col + .col { border-left: 0; border-top: 1px solid var(--border-soft); } }
+  .recipe-body p { margin: 0 0 10px; color: var(--text-muted); font-size: 14.5px; line-height: 1.55; }
+  .recipe-body .label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 10px; }
+  .recipe-body ul { margin: 0; padding-left: 18px; color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+  .flow-diagram { margin: 28px 0; padding: 24px; background: var(--bg-card); border: 1px solid var(--border); font-family: var(--mono); font-size: 13px; line-height: 1.8; color: var(--text-muted); overflow-x: auto; }
+  .flow-diagram .path.queue { color: var(--good); font-weight: 600; }
+  .flow-diagram .path.script { color: var(--warn); font-weight: 600; }
+  .field-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  .field-table th, .field-table td { border: 1px solid var(--border-soft); padding: 10px 14px; text-align: left; vertical-align: top; }
+  .field-table th { background: var(--bg-panel); font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+  .field-table td { color: var(--text-muted); }
+  .field-table td:first-child { color: var(--accent-bright); font-family: var(--mono); font-size: 13px; }
+  footer { margin-top: 64px; padding: 24px 0; border-top: 1px solid var(--border); color: var(--text-faint); font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; position: relative; z-index: 2; }
+  footer .sig { color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="frame row">
+    <span><span class="dot"></span><span class="classification">Internal Document</span></span>
+    <span>Barks System · Designer Guide · 2026-06-14</span>
+  </div>
+</div>
+
+<main class="frame">
+
+  <header class="dossier">
+    <div class="stamp">Narrative · Audio · Gameplay</div>
+    <h1>Система <span class="accent">баркoв</span><br>после рефакторинга</h1>
+    <p class="lede">
+      Руководство для дизайнеров и нарративщиков, работающих в Unreal Editor.
+      Объясняет, как теперь запускать реплики NPC: через реактивную очередь или прямое скриптовое воспроизведение —
+      и что больше не нужно трогать на Blueprint NPC.
+    </p>
+  </header>
+
+  <section id="summary">
+    <div class="section-head"><span class="num">00 ·</span><h2>Коротко</h2></div>
+    <div class="callout accent">
+      <span class="label">Главное</span>
+      <ul>
+        <li><strong>Контент барков</strong> (строки, VO, правила подбора) по-прежнему живёт в <code>UBarkDefinitionDataAsset</code> — ассеты <code>DA_*_Barks</code> на каждого NPC. Это не менялось.</li>
+        <li>Теперь есть <strong>два чётких пути запуска</strong>: <em>реактивный</em> (очередь, все NPC слушают) и <em>скриптовый</em> (прямое воспроизведение на конкретном NPC).</li>
+        <li>С NPC Blueprint <strong>убраны</strong> путаные runtime-поля и функции: <code>StoredBarkTrigger</code>, <code>BarkTrigger</code>, <code>StoredBarkCustomTrigger</code>, <code>StoreBarkData</code>, <code>CommitBark</code>, <code>CommitBarkWithStoredData</code>, <code>bAutoSetTargetAndSource</code>. Их больше нет — не используйте.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="changed">
+    <div class="section-head"><span class="num">01 ·</span><h2>Что <span class="accent">изменилось</span></h2></div>
+    <p class="big muted">Старая модель смешивала «сохранить триггер на компоненте» и «проиграть сейчас» в одних и тех же полях NPC Blueprint. Рефакторинг разделил ответственность: контент, реакция на мир и ручной запуск — три разных слоя.</p>
+    <div class="why-grid">
+      <div class="why-card"><div class="num">Было</div><h4>Runtime-хранилище на NPC</h4><p>Квест или сканер «записывал» триггер в компонент, потом другая система «коммитила» его. Поля дублировали друг друга, легко затереть нужный тег.</p></div>
+      <div class="why-card"><div class="num">Стало</div><h4>Два явных API</h4><p><code>AddBarkToQueue</code> — событие мира. <code>PlayBarkByTag</code> / <code>TriggerScriptedBark</code> — NPC говорит по команде, минуя очередь.</p></div>
+      <div class="why-card"><div class="num">Без изменений</div><h4>Data Asset контента</h4><p>Путь к <code>DA_*_Barks</code>, VO, условия, режимы выбора строк — всё на месте.</p></div>
+      <div class="why-card"><div class="num">Важно</div><h4>Имена в BP могли остаться</h4><p><code>DialogAction_CommitBark</code>, <code>BP_QuestAction_StoreBarkData</code>, <code>BP_QuestAction_TriggerBark</code> — классы с прежними именами, но внутри уже новые вызовы.</p></div>
+    </div>
+    <div class="callout danger">
+      <span class="label">Удалено — не использовать</span>
+      <p><code>CommitBark</code>, <code>CommitBarkWithStoredData</code>, <code>StoreBarkData</code>; свойства <code>StoredBarkTrigger</code>, <code>BarkTrigger</code>, <code>StoredBarkCustomTrigger</code>; флаг <code>bAutoSetTargetAndSource</code>.</p>
+    </div>
+  </section>
+
+  <section id="layers">
+    <div class="section-head"><span class="num">02 ·</span><h2>Три <span class="accent">слоя</span> системы</h2></div>
+    <div class="role-grid">
+      <div class="role"><div class="role-tag">Слой 1</div><h4>Контент</h4><p><code>UBarkDefinitionDataAsset</code> (<code>DA_*_Barks</code>). <code>FBarkDefinition</code>: TriggerResponses, Conditions, Barks, SelectionMode, Cooldown, bTriggerOnlyOnce.</p></div>
+      <div class="role"><div class="role-tag">Слой 2</div><h4>Реактивные события</h4><p><code>AddBarkToQueue</code> + <code>FBarkTrigger</code>. Сканы, попадания, зоны, квестовый TriggerBark.</p></div>
+      <div class="role"><div class="role-tag">Слой 3</div><h4>Скриптовый запуск</h4><p><code>SetScriptedBark</code> / <code>TriggerScriptedBark</code> или хелперы библиотеки. Задержки и циклы — на вызывающей стороне.</p></div>
+    </div>
+    <div class="flow-diagram">
+      <div><span class="path queue">РЕАКТИВНЫЙ ПУТЬ</span></div>
+      Событие → <code>AddBarkToQueue</code> → <code>UBarkSubsystem</code> → все NPC → match в DA → play<br><br>
+      <div><span class="path script">СКРИПТОВЫЙ ПУТЬ</span></div>
+      Диалог/GAS/квест → <code>PlayBarkByTag</code> или <code>TriggerScriptedBark</code> → один NPC → direct play
+    </div>
+    <div class="callout good">
+      <span class="label">Что это даёт</span>
+      <p>Зона входа и реплика охранника в диалоге — разные механизмы. Очередь: «кто-то из NPC ответит». Direct play: говорит именно этот актор.</p>
+    </div>
+  </section>
+
+  <section id="vocab">
+    <div class="section-head"><span class="num">03 ·</span><h2>Словарь</h2></div>
+    <p class="muted">Термины, которые встретятся в Editor, диалоговых графах и квестовых Blueprint.</p>
+    <div class="vocab">
+      <div class="term"><div class="name">Bark Tag<span class="alt">/ BarkTag</span></div><div class="def">Gameplay Tag, идентифицирующий <em>тип</em> барка: <code>Bark.Area.Enter</code>, <code>Bark.Interaction.NPC.SampleResponse</code> и т.д. Должен совпасть с одним из <code>TriggerResponses</code> в DA персонажа.</div></div>
+      <div class="term"><div class="name">FBarkTrigger</div><div class="def">Структура запроса: <code>BarkTag</code>, <code>Source</code>, <code>Target</code>, <code>AdditionalGameplayTags</code>, <code>BlockBarksWithTags</code>. Используется в <code>AddBarkToQueue</code> и при сопоставлении ответов в definition.</div></div>
+      <div class="term"><div class="name">FBarkCustomTrigger</div><div class="def">Настройки задержки и цикла на стороне вызывающего (DialogAction, quest BP, CustomBarkTrigger). Не хранится на NPC как «stored trigger» — передаётся в вызов или в <code>SetScriptedBark</code>.</div></div>
+      <div class="term"><div class="name">Pending / Default</div><div class="def"><code>PendingScriptedBarkTag</code> — runtime override от квеста или <code>SetScriptedBark</code>. <code>DefaultScriptedBarkTag</code> — значение на Blueprint NPC. <code>TriggerScriptedBark</code> берёт Pending, если он валиден, иначе Default.</div></div>
+      <div class="term"><div class="name">DA_*_Barks</div><div class="def">Data Asset с определениями барков для персонажа. Единственный источник строк, VO и правил выбора. Blueprint хранит только теги и вызовы API.</div></div>
+      <div class="term"><div class="name">Очередь<span class="alt">/ Queue</span></div><div class="def"><code>UBarkSubsystem</code> (GameInstance subsystem) хранит активные триггеры и каждый тик опрашивает все зарегистрированные <code>UBarkComponent</code>. Подходит для событий «в мире произошло X — кто-то должен отреагировать».</div></div>
+      <div class="term"><div class="name">Direct play</div><div class="def">Воспроизведение на одном компоненте, минуя очередь: <code>PlayBarkByTag</code>, <code>StartBarkLoop</code>, <code>TriggerScriptedBark</code>. Гарантирует, что говорит именно этот NPC.</div></div>
+    </div>
+  </section>
+
+  <section id="when">
+    <div class="section-head"><span class="num">04 ·</span><h2>Когда <span class="accent">что использовать</span></h2></div>
+    <div class="table">
+      <div class="tr header"><div class="td">Ситуация</div><div class="td">Использовать</div></div>
+      <div class="tr"><div class="td">Событие мира: скан, area enter, quest trigger с area-тегами</div><div class="td"><code>AddBarkToQueue</code></div></div>
+      <div class="tr"><div class="td">NPC говорит сейчас в диалоге/скрипте</div><div class="td"><code>PlayBarkByTag</code> или <code>TriggerScriptedBark</code></div></div>
+      <div class="tr"><div class="td">Задержка или loop</div><div class="td"><code>StartBarkLoop</code> или <code>FBarkCustomTrigger</code> на caller</div></div>
+      <div class="tr"><div class="td">Квест arm для GAS/диалога</div><div class="td"><code>SetScriptedBark</code></div></div>
+      <div class="tr"><div class="td">Fire armed bark</div><div class="td"><code>TriggerScriptedBark</code> или <code>TriggerScriptedBarkOnNpcComponent</code></div></div>
+      <div class="tr"><div class="td">Разовая реплика с inline-тегом и timing без предварительного arm</div><div class="td"><code>TriggerScriptedBarkOnNpc</code> или <code>PlayBarkOnNpc</code></div></div>
+    </div>
+    <div class="callout warn">
+      <span class="label">Частая ошибка</span>
+      <p><code>TriggerScriptedBarkOnNpc</code> с <code>Bark.Area.Enter</code> не заменяет очередь. Area-барки — только <code>AddBarkToQueue</code>.</p>
+    </div>
+  </section>
+
+  <section id="component-api">
+    <div class="section-head"><span class="num">05 ·</span><h2>API: <span class="accent">BarkComponent</span></h2></div>
+    <div class="api-block"><div class="api-head"><code>PlayBarkByTag</code><span class="kind">Direct · немедленно</span></div><div class="api-body"><p>Одна строка по тегу, обходит очередь. Source/Target/AdditionalTags для conditions и FBarkResponse.</p></div></div>
+    <div class="api-block"><div class="api-head"><code>StartBarkLoop</code> / <code>StopBarkLoop</code><span class="kind">Direct · delay/loop</span></div><div class="api-body"><p>Отложенное/циклическое воспроизведение с <code>FBarkCustomTrigger</code>.</p></div></div>
+    <div class="api-block"><div class="api-head"><code>SetScriptedBark</code><span class="kind">Arm</span></div><div class="api-body"><p>Записывает Pending tag/timing. Не играет. <strong>Пустой BarkTag не стирает</strong> ранее armed tag — partial update для face scan.</p></div></div>
+    <div class="api-block"><div class="api-head"><code>TriggerScriptedBark</code><span class="kind">Fire</span></div><div class="api-body"><p>Pending или DefaultScriptedBarkTag/Timing. При delay/loop → StartBarkLoop, иначе PlayBarkByTag.</p></div></div>
+    <table class="field-table">
+      <thead><tr><th>Свойство BP</th><th>Назначение</th></tr></thead>
+      <tbody>
+        <tr><td>DefaultScriptedBarkTag</td><td>Дефолтный тег (MCRN guard: Bark.Interaction.NPC.SampleResponse)</td></tr>
+        <tr><td>DefaultScriptedBarkTiming</td><td>Timing по умолчанию</td></tr>
+        <tr><td>BarkDefinition</td><td>Ссылка на DA_*_Barks</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="library-api">
+    <div class="section-head"><span class="num">06 ·</span><h2>API: <span class="accent">UBarkBlueprintFunctionLibrary</span></h2></div>
+    <div class="table">
+      <div class="tr header"><div class="td">Функция</div><div class="td">Назначение</div></div>
+      <div class="tr"><div class="td"><code>AddBarkToQueue</code></div><div class="td">Reactive fan-out. false = invalid tag, duplicate, block, cooldown.</div></div>
+      <div class="tr"><div class="td"><code>PlayBarkOnNpc</code></div><div class="td">PlayBarkByTag на NPC</div></div>
+      <div class="tr"><div class="td"><code>StartBarkLoopOnNpc</code></div><div class="td">StartBarkLoop на NPC</div></div>
+      <div class="tr"><div class="td"><code>SetScriptedBarkOnNpc</code></div><div class="td">Arm без play</div></div>
+      <div class="tr"><div class="td"><code>TriggerScriptedBarkOnNpcComponent</code></div><div class="td">Fire Pending/Default</div></div>
+      <div class="tr"><div class="td"><code>TriggerScriptedBarkOnNpc</code></div><div class="td">Inline tag+timing. Не для reactive/area.</div></div>
+    </div>
+  </section>
+
+  <section id="integrations">
+    <div class="section-head"><span class="num">07 ·</span><h2>Диалоги, <span class="accent">квесты, GAS</span></h2></div>
+
+    <h3>Dialog Graph</h3>
+    <p class="muted">Класс <code>DialogAction_CommitBark</code> <strong>сохранил имя</strong> — в диалоговых графах ищите его как раньше. Внутри теперь <code>PlayBarkByTag</code> или <code>StartBarkLoop</code> на <code>UBarkComponent</code> целевого NPC. Поля настройки те же: Target NPC, Source Tag (Flow identity), BarkTag, AdditionalTags, BarkCustomTrigger, TagCooldownSeconds, InitialStartDelay.</p>
+
+    <h3>Quest Actions</h3>
+    <div class="why-grid">
+      <div class="why-card"><div class="num">Store</div><h4>BP_QuestAction_StoreBarkData</h4><p>Вызывает <code>SetScriptedBark</code> — «заряжает» NPC для последующего срабатывания. Не проигрывает реплику сразу.</p></div>
+      <div class="why-card"><div class="num">Trigger</div><h4>BP_QuestAction_TriggerBark</h4><p>Вызывает <code>AddBarkToQueue</code> — <strong>не direct play</strong>. Критично для тегов вроде <code>Bark.Area.Enter</code>, где важны Source/Target и fan-out.</p></div>
+    </div>
+    <div class="callout accent">
+      <span class="label">Паттерн store + trigger</span>
+      <p>Квест Store → arm NPC (<code>SetScriptedBark</code>). Позже GAS или диалог → <code>TriggerScriptedBark</code>. Либо квест Trigger → очередь для world-reactive барков. Два разных «trigger» — не путать.</p>
+    </div>
+
+    <h3>Gameplay Abilities</h3>
+    <p class="muted"><code>GA_GuardPlayBark</code>, <code>GA_TriggerBarkWithStoredData</code> и подобные вызывают <code>TriggerScriptedBark</code> на <code>UBarkComponent</code> целевого NPC. Тег берётся из Pending (если квест успел arm) или из <code>DefaultScriptedBarkTag</code> на Blueprint guard. Типичный кейс MCRN: на BP задан Default, ability только «огонь».</p>
+
+    <h3>Bark Trigger Area</h3>
+    <p class="muted">Актор зоны (<code>ABarkTriggerArea</code>) при overlap игрока кладёт в очередь <code>Bark.Area.Enter</code> / <code>Bark.Area.Leave</code> с Source = игрок, Target = зона, AdditionalTags = AreaTags актора. Дизайнеру обычно достаточно настроить AreaTags на акторе и ответы в DA NPC.</p>
+  </section>
+
+  <section id="data-asset">
+    <div class="section-head"><span class="num">08 ·</span><h2>Data Asset <span class="accent">workflow</span></h2></div>
+    <div class="callout good"><span class="label">Пути</span><ul><li>DA: <code>/Game/BorderLine/Dialogs/Barks/BarksAssets/DA_*_Barks</code></li><li>VO: <code>/Game/BorderLine/Dialogs/Barks/VO/&lt;Character&gt;/</code></li></ul></div>
+    <table class="field-table">
+      <thead><tr><th>FBarkDefinition</th><th>Описание</th></tr></thead>
+      <tbody>
+        <tr><td>TriggerResponses</td><td>FBarkResponse: BarkTag + RequiredAdditional/Source/Target tags</td></tr>
+        <tr><td>Conditions</td><td>Instanced Blueprint conditions</td></tr>
+        <tr><td>Barks</td><td>VoiceOver + Subtitle</td></tr>
+        <tr><td>SelectionMode</td><td>Random, Sequence, SequenceLooped</td></tr>
+        <tr><td>Cooldown / bTriggerOnlyOnce</td><td>Ограничения повторов на компоненте</td></tr>
+      </tbody>
+    </table>
+    <h3>FBarkResponse — матчинг</h3>
+    <p class="muted">Для срабатывания нужно: <code>Trigger.BarkTag</code> совпадает с <code>FBarkResponse.BarkTag</code>; AdditionalGameplayTags триггера содержат все RequiredAdditionalTags; Source/Target несут RequiredSourceTags / RequiredTargetTags (если заданы). Definitions проверяются по порядку — первый подходящий выигрывает.</p>
+  </section>
+
+  <section id="timing">
+    <div class="section-head"><span class="num">09 ·</span><h2><span class="accent">FBarkCustomTrigger</span></h2></div>
+    <table class="field-table">
+      <thead><tr><th>Поле</th><th>Назначение</th></tr></thead>
+      <tbody>
+        <tr><td>DelayBeforeSingleTrigger</td><td>Задержка перед одним play</td></tr>
+        <tr><td>InitialStartDelay / Variance</td><td>Стартовая задержка ± разброс</td></tr>
+        <tr><td>TriggerTime</td><td>Интервал в loop</td></tr>
+        <tr><td>bIsLooping / TriggerNumber</td><td>Цикл и число повторов</td></tr>
+        <tr><td>TargetLoopEndTriggerEvent</td><td>GAS stop на Target</td></tr>
+        <tr><td>SourceLoopEndTriggerEvent</td><td>GAS stop на Source</td></tr>
+      </tbody>
+    </table>
+    <div class="callout accent">
+      <span class="label">DialogAction_CommitBark</span>
+      <p>Поле <code>InitialStartDelay</code> (по умолчанию 0.1 с) дополнительно прокидывается в struct перед play/loop — короткая пауза перед репликой в кат-сцене диалога.</p>
+    </div>
+  </section>
+
+  <section id="scenarios">
+    <div class="section-head"><span class="num">10 ·</span><h2>Сценарии <span class="accent">миграции</span></h2></div>
+    <div class="recipes">
+      <article class="recipe">
+        <div class="recipe-head"><h4>MCRN Guard</h4><span class="status real">актуально</span></div>
+        <div class="recipe-body">
+          <div class="col"><div class="label">Настройка</div><ul><li>DefaultScriptedBarkTag на BP</li><li>GA_GuardPlayBark → TriggerScriptedBark</li></ul></div>
+          <div class="col"><div class="label">Что это даёт</div><p>Ability не знает тег; квест может override через SetScriptedBark.</p></div>
+        </div>
+      </article>
+      <article class="recipe">
+        <div class="recipe-head"><h4>Face Scan</h4><span class="status real">актуально</span></div>
+        <div class="recipe-body">
+          <div class="col"><div class="label">Настройка</div><ul><li>Quest Store → tag</li><li>CustomBarkTrigger SetScriptedBark только timing</li><li>Пустой tag не затирает quest tag</li></ul></div>
+          <div class="col"><div class="label">Что это даёт</div><p>Разделение «какой текст» и «когда играть».</p></div>
+        </div>
+      </article>
+      <article class="recipe">
+        <div class="recipe-head"><h4>Area enter — BarkTriggerArea</h4><span class="status real">актуально</span></div>
+        <div class="recipe-body">
+          <div class="col"><div class="label">Цепочка</div><ul><li>Игрок входит в box → AddBarkToQueue</li><li>Tag Bark.Area.Enter, Source=player, Target=area</li><li>AdditionalTags = AreaTags зоны</li></ul></div>
+          <div class="col"><div class="label">В DA NPC</div><p>Response с тем же BarkTag + RequiredAdditionalTags под теги зоны. Cooldown и conditions — по необходимости.</p></div>
+        </div>
+      </article>
+      <article class="recipe">
+        <div class="recipe-head"><h4>Store + Trigger</h4><span class="status real">актуально</span></div>
+        <div class="recipe-body">
+          <div class="col"><div class="label">Цепочка</div><ul><li>Store → SetScriptedBark</li><li>GAS/dialog → TriggerScriptedBark</li><li>Area → AddBarkToQueue</li></ul></div>
+          <div class="col"><div class="label">Что это даёт</div><p>Паттерн store+trigger сохранён; API обновлён.</p></div>
+        </div>
+      </article>
+      <article class="recipe">
+        <div class="recipe-head"><h4>Старые Commit/Store</h4><span class="status removed">удалить</span></div>
+        <div class="recipe-body">
+          <div class="col"><div class="label">Замена</div><ul><li>Commit* → TriggerScriptedBark</li><li>StoreBarkData → SetScriptedBark</li><li>Quest Trigger area → AddBarkToQueue</li></ul></div>
+          <div class="col"><div class="label">Что это даёт</div><p>Один канонический вызов на intent.</p></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="dont">
+    <div class="section-head"><span class="num">11 ·</span><h2>Чего <span class="accent">не делать</span></h2></div>
+    <div class="why-grid">
+      <div class="why-card"><div class="num">✕</div><h4>CommitBark / StoreBarkData</h4><p>Удалены. Set+Trigger или Play/Queue.</p></div>
+      <div class="why-card"><div class="num">✕</div><h4>StoredBarkTrigger на BP</h4><p>Не использовать runtime storage на компоненте.</p></div>
+      <div class="why-card"><div class="num">✕</div><h4>TriggerScripted для area</h4><p>Только AddBarkToQueue с Source/Target/Additional.</p></div>
+      <div class="why-card"><div class="num">✕</div><h4>Текст вне DA</h4><p>Контент только в DA_*_Barks.</p></div>
+    </div>
+  </section>
+
+  <section id="troubleshooting">
+    <div class="section-head"><span class="num">12 ·</span><h2>Диагностика</h2></div>
+    <div class="table">
+      <div class="tr header"><div class="td">Проверка</div><div class="td">Действие</div></div>
+      <div class="tr"><div class="td">Тишина</div><div class="td">Тег в TriggerResponses DA? BarkDefinition на NPC?</div></div>
+      <div class="tr"><div class="td">Queue false</div><div class="td">Invalid tag, duplicate, BlockBarksWithTags, cooldown</div></div>
+      <div class="tr"><div class="td">Area молчит</div><div class="td">Source=player, Target=zone, Additional=AreaTags; match в DA</div></div>
+      <div class="tr"><div class="td">Один раз и стоп</div><div class="td">bTriggerOnlyOnce, Cooldown, queue cooldown</div></div>
+      <div class="tr"><div class="td">TriggerScripted пуст</div><div class="td">Нет Pending и DefaultScriptedBarkTag</div></div>
+      <div class="tr"><div class="td">Срабатывает не тот NPC</div><div class="td">Reactive path — несколько NPC могут иметь response. Уточните Required tags или используйте direct play.</div></div>
+      <div class="tr"><div class="td">Условия не проходят</div><div class="td">Instanced Conditions: дистанция, TargetIsSelf, NPC ID — проверьте Source/Target в вызове.</div></div>
+      <div class="tr"><div class="td">Wrong API</div><div class="td">Direct vs queue — главная причина «тихого» failure. Раздел 04.</div></div>
+    </div>
+    <div class="callout good"><span class="label">Чеклист</span><ol><li>Queue или direct?</li><li>Тег в DA?</li><li>Source/Target/Additional</li><li>Cooldown/Conditions</li><li>Pending или Default?</li></ol></div>
+  </section>
+
+  <div class="callout accent" style="margin-top:48px;">
+    <span class="label">Чему служит документ</span>
+    <p>Практическая карта после рефакторинга для дизайнеров. Контент в DA; изменился контракт запуска. Reactive vs scripted — два разных intent, не смешивать.</p>
+  </div>
+
+</main>
+
+<footer>
+  <div class="frame" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <span class="sig">BorderLine internal doc</span>
+    <span>Barks System · 2026-06-14</span>
+  </div>
+</footer>
+
+</body>
+</html>
